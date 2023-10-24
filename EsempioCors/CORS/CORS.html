@@ -1,0 +1,99 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head runat="server">
+    <title></title>
+    <style>
+        td,
+        th {
+            border: 1px solid black
+        }
+    </style>
+    <script src="JS/jquery.js"></script>
+    
+    <script>
+
+
+
+       
+
+        function visualizzaProdottiInGriglia(prodotti) {
+
+            var container = $('#griglia');
+            container.html("");
+            var table = $('<table>');
+            for (var i = 0; i < prodotti.length; i++) {
+                var tr = $('<tr>');
+                var tdNome = $('<td>');
+                tdNome.append(prodotti[i].nomeProdotto);
+                tr.append(tdNome);
+                var tdPrezzo = $('<td>');
+                tdPrezzo.append(prodotti[i].prezzo);
+                tr.append(tdPrezzo);
+                var tdGiacenza = $('<td>');
+                tdGiacenza.append(prodotti[i].giacenza);
+                tr.append(tdGiacenza);
+                table.append(tr);
+            }
+            container.append(table);
+            /* alert(container.html());*/
+        }
+
+        $(function () {
+
+           
+            //async - await
+            $("#btnGet").click(
+                async function () {
+
+                    try {
+                        var data = await getProdottiFromWebApi();
+                        visualizzaProdottiInGriglia(data);
+                    }
+                    catch (error) {
+                        alert(error);
+                    }
+
+                    //ALTRO MODO, con promise
+                    //getProdottiFromWebApi()
+                    //    .then(data => visualizzaProdottiInGriglia(data))
+                    //    .catch(error => alert(error));
+
+
+
+                });
+
+            //funzione asincrona
+            function getProdottiFromWebApi() {
+                //NUOVA SINTASSI JQuery 3
+                //poichè ajax è asincrono,devo attendere risposta, quindi return qui
+                // e non in .done
+                return $.ajax({
+                    type: "GET",
+                    url: "http://localhost:5148/api/ProdottiEntities",
+                    dataType: 'json' //formato della risposta                 
+                });
+
+            }
+
+
+           
+
+             
+
+        });
+
+    </script>
+</head>
+
+<body>
+    <form id="form1" runat="server">
+        
+        <input type="button" value="get JSON (tutti i prodotti)" id="btnGet" />
+       
+
+
+        <div id="griglia"></div>
+    </form>
+</body>
+
+</html>
